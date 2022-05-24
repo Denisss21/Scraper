@@ -1,8 +1,13 @@
 const browserObject = require('./browser');
-const scraperController = require('./pageController');
+const scraperController = require('./scraperController');
 
-//Start the browser and create a browser instance
-let browserInstance = browserObject.startBrowser();
+const blog = process.env.BLOG;
 
-// Pass the browser instance to the scraper controller
-scraperController(browserInstance)
+(async () => {
+    //Start the browser and create a browser instance
+    let browserInstance = browserObject.startBrowser();
+
+    // Pass the browser instance to the scraper controller
+    await scraperController(browserInstance, blog)
+})();
+
