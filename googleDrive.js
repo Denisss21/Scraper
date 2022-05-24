@@ -74,14 +74,16 @@ async function authenticate(scopes) {
 }
 
 //creating a folder
-async function createFolder(name) {
+async function createFolder(name, parentId) {
     const drive = google.drive({
         version: 'v3',
         auth: oauth2Client
     });
-    const fileMetadata = {
+    let fileMetadata;
+    fileMetadata = {
         'name': name,
-        'mimeType': 'application/vnd.google-apps.folder'
+        'mimeType': 'application/vnd.google-apps.folder',
+        'parents': [parentId]
     };
     const folderObj =  await drive.files.create({
         requestBody: fileMetadata,
@@ -97,7 +99,7 @@ async function createDoc({article, parentId}) {
     });
     const title = article.date ? article.date + ' ' + article.title : article.title;
 
-    const res = await drive.files.create({
+    await drive.files.create({
         requestBody: {
             name: title,
             mimeType: 'text/html',
@@ -108,8 +110,6 @@ async function createDoc({article, parentId}) {
             body: (article.content)
         }
     });
-
-    console.log(res);
 }
 
 const scopes = [
@@ -118,20 +118,26 @@ const scopes = [
 
 authenticate(scopes)
     .then(async () => {
-        let folderId;
-        let articles;
         switch (blog) {
             case 'n2ws':
-                folderId = await createFolder(blog);
+                const rootFolderId = await createFolder('n2ws/blog');
                 const rawdata = fs.readFileSync('n2ws.json');
-                articles = JSON.parse(rawdata);
+                const articles = JSON.parse(rawdata);
+                const categories = new Set(articles.map(article => article.category));
+                const categoriesDict = {};
+                for (const category of categories) {
+                    categoriesDict[category] = await createFolder(category, rootFolderId);
+                }
+                for (const article of articles) {
+                    await createDoc({article, parentId: categoriesDict[article.category]})
+                }
                 break;
             default:
                 console.error('Please specify blog to scrap: n2ws, clumio');
         }
-
-        for (const article of articles) {
-            await createDoc({article, parentId: folderId})
-        }
+        //
+        // for (const article of articles) {
+        //     await createDoc({article, parentId: folderId})
+        // }
     })
     .catch(console.error);

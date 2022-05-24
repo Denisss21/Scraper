@@ -11,7 +11,7 @@ const n2wsScraper = {
 
         async function scrapeCurrentPage() {
             await page.waitForSelector('.elementor-post__card');
-            let articles = await page.$$eval('.elementor-post__card', async (elArr) => {
+            const articles = await page.$$eval('.elementor-post__card', async (elArr) => {
                 // Extract the links from the data
                 return elArr.map(el => {
                     const url = el.querySelector('h3 > a').href;
@@ -48,6 +48,11 @@ const n2wsScraper = {
                     const element = document.querySelector('.elementor-author-box__name');
                     return element ? element.textContent.replace(/(\r\n\t|\n|\r|\t)/gm, "") : '';
                 });
+
+                articleObj['category'] = await articlePage.evaluate(() => {
+                    const element = document.querySelector('.elementor-post-info__terms-list-item');
+                    return element ? element.textContent.replace(/(\r\n\t|\n|\r|\t)/gm, "") : 'Other';
+                });
                 await articlePage.close();
             }
 
@@ -71,7 +76,7 @@ const n2wsScraper = {
                 }
             }
 
-            await scrapeNextPage();
+            // await scrapeNextPage();
             await page.close();
         }
 
