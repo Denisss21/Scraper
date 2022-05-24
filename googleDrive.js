@@ -128,9 +128,12 @@ authenticate(scopes)
                 for (const category of categories) {
                     categoriesDict[category] = await createFolder(category, rootFolderId);
                 }
-                for (const article of articles) {
+                for (const [i, article] of articles.entries()) {
+                    console.log(articles.length - i, ' articles left to upload');
+                    console.log('Uploading to Google Drive article: ', article.title);
                     await createDoc({article, parentId: categoriesDict[article.category]})
                 }
+                console.log('Articles have been uploaded successfully');
                 break;
             default:
                 console.error('Please specify blog to scrap: n2ws, clumio');

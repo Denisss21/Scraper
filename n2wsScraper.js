@@ -4,14 +4,14 @@ const n2wsScraper = {
     url: 'https://n2ws.com/blog',
     async scrape(browser) {
         let page = await browser.newPage();
-        console.log(`Navigating to ${this.url}...`);
+        console.log('Scraping articles from page: ', this.url);
         await page.goto(this.url);
 
         let scrapedData = [];
 
         async function scrapeCurrentPage() {
-            await page.waitForSelector('.elementor-post__card');
-            const articles = await page.$$eval('.elementor-post__card', async (elArr) => {
+            await page.waitForSelector('.elementor-element-0ecdd52  .elementor-post');
+            const articles = await page.$$eval('.elementor-element-0ecdd52  .elementor-post', async (elArr) => {
                 // Extract the links from the data
                 return elArr.map(el => {
                     const url = el.querySelector('h3 > a').href;
@@ -64,6 +64,7 @@ const n2wsScraper = {
             const nextButtonHref = await page.$eval('.next', a => a.href);
 
             if(nextButtonHref){
+                console.log('Scraping articles from page: ', nextButtonHref);
                 await page.click('.next');
                 return scrapeCurrentPage(); // Call this function recursively
             }
@@ -72,6 +73,8 @@ const n2wsScraper = {
         }
 
         await scrapeCurrentPage();
+
+        console.log(scrapedData.length, ' articles have been scraped');
 
         // stringify JSON Object
         let jsonContent = JSON.stringify(scrapedData);
