@@ -61,22 +61,13 @@ const n2wsScraper = {
                 scrapedData.push(article);
             }
 
-            async function scrapeNextPage() {
-                let nextButtonExist;
-                try{
-                    await page.$eval('.next', a => a.textContent);
-                    nextButtonExist = true;
-                }
-                catch(err){
-                    nextButtonExist = false;
-                }
-                if(nextButtonExist){
-                    await page.click('.next');
-                    return scrapeCurrentPage(); // Call this function recursively
-                }
+            const nextButtonHref = await page.$eval('.next', a => a.href);
+
+            if(nextButtonHref){
+                await page.click('.next');
+                return scrapeCurrentPage(); // Call this function recursively
             }
 
-            // await scrapeNextPage();
             await page.close();
         }
 
