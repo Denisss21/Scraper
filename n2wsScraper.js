@@ -15,8 +15,16 @@ const n2wsScraper = {
                 // Extract the links from the data
                 return elArr.map(el => {
                     const url = el.querySelector('h3 > a').href;
-                    const date = el.querySelector('.elementor-post-date').textContent.replace(/(\r\n\t|\n|\r|\t)/gm, "");
+                    const dateRaw = el.querySelector('.elementor-post-date').textContent.replace(/(\r\n\t|\n|\r|\t)/gm, "");
 
+                    let date = '';
+                    if (dateRaw) {
+                        const parsedDate = new Date(Date.parse(dateRaw));
+                        const offset = parsedDate.getTimezoneOffset()
+                        const offsetDate = new Date(parsedDate.getTime() - (offset*60*1000))
+
+                        date = offsetDate.toISOString().split('T')[0];
+                    }
                     return {url, date}
                 });
             });
