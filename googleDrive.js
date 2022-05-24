@@ -95,7 +95,7 @@ async function createDoc({article, parentId}) {
         version: 'v3',
         auth: oauth2Client
     });
-    const title = article.date ? article.date + '_' + article.title : article.title;
+    const title = article.date ? article.date + ' ' + article.title : article.title;
 
     const res = await drive.files.create({
         requestBody: {
