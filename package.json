@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "scrape:n2ws": "BLOG=n2ws node index.js",
-    "gdrive:n2ws": "BLOG=n2ws node googleDrive.js"
+    "scrape:n2ws": "cross-env BLOG=n2ws node index.js",
+    "gdrive:n2ws": "cross-env BLOG=n2ws node googleDrive.js",
+    "scrape:clumioScraper": "cross-env BLOG=clumio node index.js"
   },
   "author": "",
   "license": "ISC",
@@ -14,5 +15,8 @@
     "open": "^8.0.0",
     "puppeteer": "^14.1.0",
     "server-destroy": "^1.0.1"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3"
   }
 }
