@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "scrape:n2ws": "cross-env BLOG=n2ws node index.js",
-    "gdrive:n2ws": "cross-env BLOG=n2ws node googleDrive.js",
-    "scrape:clumioScraper": "cross-env BLOG=clumio node index.js"
+    "gdrive:n2ws": "cross-env BLOG=n2ws node googleDrive.js"
   },
   "author": "",
   "license": "ISC",
